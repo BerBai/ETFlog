@@ -20,7 +20,7 @@ import { createDbWorker } from "sql.js-httpvfs";
 // import HelloWorld from "@/components/HelloWorld.vue";
 
 const publicPath =
-  process.env.NODE_ENV === "production" ? "/vue-sql.js-httpvfs/" : "/";
+  process.env.NODE_ENV === "production" ? "/ETFlog/" : "/";
 
 const workerUrl = new URL(
   `${publicPath}sql.js-httpvfs/sqlite.worker.js`,
