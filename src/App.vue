@@ -19,8 +19,7 @@ import { createDbWorker } from "sql.js-httpvfs";
 
 // import HelloWorld from "@/components/HelloWorld.vue";
 
-const publicPath =
-  process.env.NODE_ENV === "production" ? "/ETFlog/" : "/";
+const publicPath = process.env.NODE_ENV === "production" ? "/ETFlog/" : "/";
 
 const workerUrl = new URL(
   `${publicPath}sql.js-httpvfs/sqlite.worker.js`,
@@ -42,6 +41,9 @@ export default {
     };
   },
   async mounted() {
+    
+  },
+  async created() {
     this.worker = await createDbWorker(
       [
         {
@@ -56,6 +58,8 @@ export default {
       workerUrl.toString(),
       wasmUrl.toString()
     );
+
+    this.runSql("SELECT name _id FROM sqlite_master WHERE type ='table'");
   },
   methods: {
     async runSql(sql) {
