@@ -150,10 +150,10 @@ export default {
     async queryByText(){
       var start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize;
       var sql = '';
-      if(this.queryParams.table == 'eft') {
-        sql = 'SELECT * FROM ' + this.queryParams.table + ' WHERE text like "%' + this.queryParams.searchText + '%" LIMIT ' + start + ', ' + this.queryParams.pageSize;
-      } else {
+      if(this.queryParams.table == 'weibo') {
         sql = 'SELECT * FROM ' + this.queryParams.table + ' WHERE content like "%' + this.queryParams.searchText + '%" LIMIT ' + start + ', ' + this.queryParams.pageSize;
+      } else {
+        sql = 'SELECT * FROM ' + this.queryParams.table + ' WHERE text like "%' + this.queryParams.searchText + '%" LIMIT ' + start + ', ' + this.queryParams.pageSize;
       }
       console.log(sql);
       this.result = await this.worker.db.query(sql);
