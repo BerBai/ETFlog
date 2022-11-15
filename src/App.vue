@@ -11,6 +11,7 @@
     </button> -->
     
     <!-- <pre>{{ result }}</pre> -->
+    <!-- <img src="http://ww2.sinaimg.cn/large/006cSmwjly1h7g5p1dx23j30u011zth4.jpg" referrerpolicy="no-referrer"/> -->
 
     <el-container style=" border: 1px solid #eee">
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
@@ -38,20 +39,29 @@
       
       <el-container style="height: calc(100vh - 20px)"> 
         <el-header style="text-align: right; font-size: 12px">
+          <el-input
+            style="width: 200px; margin-right: 15px"
+            placeholder="请输入内容"
+            prefix-icon="el-icon-search"
+            v-model="queryParams.searchText"
+            clearable
+            @change="queryByText">
+          </el-input>
+          
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>查看</el-dropdown-item>
-              <el-dropdown-item>新增</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-header>
         <el-main>
           <el-table :data="result">
-            <el-table-column prop="date" label="日期" width="140" :formatter="formatDate">
+            <el-table-column prop="date" label="日期" width="150" :formatter="formatDate">
             </el-table-column>
-            <el-table-column prop="text" label="内容">
+            <el-table-column prop="text" label="内容" v-if="!isEFT">
+            </el-table-column>
+            <el-table-column prop="content" label="内容2" v-if="isEFT">
             </el-table-column>
           </el-table>
         </el-main>
@@ -91,7 +101,15 @@ export default {
       sentenceNavList: [
         {name:'sentences',navItem:'短句'},
         {name:'story',navItem:'故事'}
-      ]
+      ],
+      /** 是否EFT */
+      isEFT: false,
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        table: undefined,
+        searchText: undefined
+      }
     };
   },
   async mounted() {
@@ -123,7 +141,21 @@ export default {
     },
     /** 查询 */
     async queryber(table) {
+      this.isEFT = false;
       var sql = 'SELECT * FROM ' + table;
+      this.queryParams.table = table;
+      this.result = await this.worker.db.query(sql);
+    },
+    /** 搜索 */
+    async queryByText(){
+      var start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize;
+      var sql = '';
+      if(this.queryParams.table == 'eft') {
+        sql = 'SELECT * FROM ' + this.queryParams.table + ' WHERE text like "%' + this.queryParams.searchText + '%" LIMIT ' + start + ', ' + this.queryParams.pageSize;
+      } else {
+        sql = 'SELECT * FROM ' + this.queryParams.table + ' WHERE content like "%' + this.queryParams.searchText + '%" LIMIT ' + start + ', ' + this.queryParams.pageSize;
+      }
+      console.log(sql);
       this.result = await this.worker.db.query(sql);
     },
     /** 格式时间 */
